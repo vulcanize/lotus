@@ -660,6 +660,60 @@ func (b *Blockstore) Has(ctx context.Context, cid cid.Cid) (bool, error) {
 	}
 }
 
+// GetMany implements a GetMany method for the badgerDB blockstore
+// This method returns empty slices and an error if an error other than ErrKeyNotFound is encountered
+// For every ErrKeyNotFound, the missing CID is returned but the rest of the results are returned without error
+func (b *Blockstore) GetMany(ctx context.Context, cids []cid.Cid) ([]blocks.Block, []cid.Cid, error) {
+	if err := b.access(); err != nil {
+		return nil, nil, err
+	}
+	defer b.viewers.Done()
+
+	b.lockDB()
+	defer b.unlockDB()
+
+	blks := make([]blocks.Block, 0, len(cids))
+	missingCids := make([]cid.Cid, 0, len(cids))
+	err := b.db.View(func(txn *badger.Txn) error {
+		f := func(c cid.Cid) error { // encapsulate in an anonymous function to handle key pool deferral for each key
+			if !c.Defined() {
+				return ipld.ErrNotFound{Cid: c}
+			}
+			k, pooled := b.PooledStorageKey(c)
+			if pooled {
+				defer KeyPool.Put(k)
+			}
+			switch item, err := txn.Get(k); err {
+			case nil:
+				val, err := item.ValueCopy(nil)
+				if err != nil {
+					return err
+				}
+				blk, err := blocks.NewBlockWithCid(val, c)
+				if err != nil {
+					return err
+				}
+				blks = append(blks, blk)
+			case badger.ErrKeyNotFound:
+				missingCids = append(missingCids, c)
+			default:
+				return fmt.Errorf("failed to get block from badger blockstore: %w", err)
+			}
+			return nil
+		}
+		for _, c := range cids {
+			if err := f(c); err != nil {
+				return err
+			}
+		}
+		return nil
+	})
+	if err != nil {
+		return nil, nil, err
+	}
+	return blks, missingCids, nil
+}
+
 // Get implements Blockstore.Get.
 func (b *Blockstore) Get(ctx context.Context, cid cid.Cid) (blocks.Block, error) {
 	if !cid.Defined() {
