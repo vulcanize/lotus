@@ -387,6 +387,19 @@ func (m *EventFilterManager) Install(ctx context.Context, minHeight, maxHeight a
 	}
 
 	if m.EventIndex != nil && minHeight != -1 && minHeight < currentHeight {
+		// hacky fix to fix issue with non-canonical log results being returned
+		// only works when the filter has the same start and stop height
+		if minHeight == maxHeight {
+			canonicalTipSet, err := m.ChainStore.GetTipsetByHeight(ctx, minHeight, nil, false)
+			if err != nil {
+				return nil, err
+			}
+			canonicalTipSetCID, err := canonicalTipSet.Key().Cid()
+			if err != nil {
+				return nil, err
+			}
+			f.tipsetCid = canonicalTipSetCID
+		}
 		// Filter needs historic events
 		if err := m.EventIndex.PrefillFilter(ctx, f); err != nil {
 			return nil, err
