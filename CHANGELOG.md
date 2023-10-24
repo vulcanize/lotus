@@ -478,6 +478,7 @@ Lotus-workers can now be built to leverage the SupraSeal C2 sealing optimization
 - fix: lotus-provider: lotus-provider msg sending ([filecoin-project/lotus#11480](https://github.com/filecoin-project/lotus/pull/11480))
 - fix: lotus-provider: Fix winning PoSt ([filecoin-project/lotus#11483](https://github.com/filecoin-project/lotus/pull/11483))
 - chore: fix: sql Scan cannot write to an object ([filecoin-project/lotus#11487](https://github.com/filecoin-project/lotus/pull/11487))
+- fix: Exclude reverted events in `eth_getLogs` results [filecoin-project/lotus#11318](https://github.com/filecoin-project/lotus/pull/11318)
 
 ## Dependencies
 - deps: update go-libp2p to v0.28.1 ([filecoin-project/lotus#10998](https://github.com/filecoin-project/lotus/pull/10998))
