@@ -606,6 +606,42 @@ func (gw *Node) EthTraceReplayBlockTransactions(ctx context.Context, blkNum stri
 	return gw.target.EthTraceReplayBlockTransactions(ctx, blkNum, traceTypes)
 }
 
+func (gw *Node) EthDebugTraceCall(ctx context.Context, args ethtypes.EthTxArgs, blockNrOrHash ethtypes.EthBlockNumberOrHash, config *ethtypes.TraceCallConfig) (interface{}, error) {
+	if err := gw.limit(ctx, stateRateLimitTokens); err != nil {
+		return nil, err
+	}
+
+	if err := gw.checkEthBlockParam(ctx, blockNrOrHash, 0); err != nil {
+		return nil, err
+	}
+
+	return gw.target.EthDebugTraceCall(ctx, args, blockNrOrHash, config)
+}
+
+func (gw *Node) EthDebugTraceBlockByHash(ctx context.Context, hash ethtypes.EthHash, config *ethtypes.TraceConfig) ([]*ethtypes.TxTraceResult, error) {
+	if err := gw.limit(ctx, stateRateLimitTokens); err != nil {
+		return nil, err
+	}
+
+	if err := gw.checkBlkHash(ctx, hash); err != nil {
+		return nil, err
+	}
+
+	return gw.target.EthDebugTraceBlockByHash(ctx, hash, config)
+}
+
+func (gw *Node) EthDebugTraceBlockByNumber(ctx context.Context, number string, config *ethtypes.TraceConfig) ([]*ethtypes.TxTraceResult, error) {
+	if err := gw.limit(ctx, stateRateLimitTokens); err != nil {
+		return nil, err
+	}
+
+	if err := gw.checkBlkParam(ctx, number, 0); err != nil {
+		return nil, err
+	}
+
+	return gw.target.EthDebugTraceBlockByNumber(ctx, number, config)
+}
+
 var EthMaxFiltersPerConn = 16 // todo make this configurable
 
 func addUserFilterLimited(ctx context.Context, cb func() (ethtypes.EthFilterID, error)) (ethtypes.EthFilterID, error) {

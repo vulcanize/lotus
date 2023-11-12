@@ -102,6 +102,10 @@ func (e EthBigInt) MarshalJSON() ([]byte, error) {
 	return json.Marshal(e.String())
 }
 
+func (e EthBigInt) ToInt() big.Int {
+	return (big.Int)(e)
+}
+
 func (e *EthBigInt) UnmarshalJSON(b []byte) error {
 	var s string
 	if err := json.Unmarshal(b, &s); err != nil {

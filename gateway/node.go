@@ -146,6 +146,9 @@ type TargetAPI interface {
 	Web3ClientVersion(ctx context.Context) (string, error)
 	EthTraceBlock(ctx context.Context, blkNum string) ([]*ethtypes.EthTraceBlock, error)
 	EthTraceReplayBlockTransactions(ctx context.Context, blkNum string, traceTypes []string) ([]*ethtypes.EthTraceReplayBlockTransaction, error)
+	EthDebugTraceCall(ctx context.Context, args ethtypes.EthTxArgs, blockNrOrHash ethtypes.EthBlockNumberOrHash, config *ethtypes.TraceCallConfig) (interface{}, error)
+	EthDebugTraceBlockByNumber(ctx context.Context, number string, config *ethtypes.TraceConfig) ([]*ethtypes.TxTraceResult, error)
+	EthDebugTraceBlockByHash(ctx context.Context, hash ethtypes.EthHash, config *ethtypes.TraceConfig) ([]*ethtypes.TxTraceResult, error)
 }
 
 var _ TargetAPI = *new(api.FullNode) // gateway depends on latest
