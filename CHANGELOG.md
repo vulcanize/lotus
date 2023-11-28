@@ -1,14 +1,20 @@
 # Lotus changelog
 
+# UNRELEASED
+- chore: Auto remove local chain data when importing chain file or snapshot ([filecoin-project/lotus#11277](https://github.com/filecoin-project/lotus/pull/11277))
+- feat: metric: export Mpool message count ([filecoin-project/lotus#11361](https://github.com/filecoin-project/lotus/pull/11361))
+- feat: sealing: load SectorsSummary from sealing SectorStats instead of calling API each time ([filecoin-project/lotus#11353](https://github.com/filecoin-project/lotus/pull/11353))
+- fix: miner info: Show correct sector state counts ([filecoin-project/lotus#11456](https://github.com/filecoin-project/lotus/pull/11456))
+- feat: add support for specifying block number when calling `eth_estimateGas` RPC number which s
+
+## Improvements
+- fix: exchange: allow up to 10k messages per block ([filecoin-project/lotus#11506](https://github.com/filecoin-project/lotus/pull/11506))
+
 # v1.25.1 / 2023-12-09
 
 This is a **highly recommended PATCH RELEASE.**  The patch release fixes the issue were node operators trying to catch up sync were unable to sync large message blocks/epochs due to an increased number of messages on the network.
 
 This patch release allows for up to 10k messages per block. Additionally, it introduces a limit on the amount of data that can be read at once, ensuring the system can handle worst-case scenarios.
-
-## Improvements
-- fix: exchange: allow up to 10k messages per block ([filecoin-project/lotus#11506](https://github.com/filecoin-project/lotus/pull/11506))
-
 
 # v 1.25.0 / 2023-11-22
 
