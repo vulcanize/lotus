@@ -326,7 +326,7 @@ func NewEventIndex(ctx context.Context, path string, chainStore *store.ChainStor
 		}
 
 		if version == 2 {
-			log.Infof("upgrading event index from version 1 to version 2")
+			log.Infof("upgrading event index from version 2 to version 3")
 
 			// to upgrade to version 3 we only need to create an index on the event_entry.key column
 			// and on the event.emitter_addr column
